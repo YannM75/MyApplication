@@ -1,6 +1,8 @@
 package com.example.yann.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -9,30 +11,49 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+    static final String STATE_CURRENT = "truc";
+    static final String VALUE_KEY_EDITTXT = "truc";
+    String truc = "";
+    Intent intentConfirm;
+    EditText editText;
+    private String value="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        intentConfirm = new Intent(this, ConfirmationActivity.class);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         Log.d("onCreate", "message Appel onCreate");
+
+        Button btnConfirmation = (Button)findViewById(R.id.appelActivity2);
+        editText = (EditText)findViewById(R.id.editText);
+
+        btnConfirmation.setOnClickListener(new ButtonConfirmClickListener(btnConfirmation));
 
 
         Toast.makeText(getApplicationContext(), "on Create", Toast.LENGTH_SHORT).show();
+    }
+
+    class ButtonConfirmClickListener implements View.OnClickListener{
+
+        public ButtonConfirmClickListener(Button button){
+
+        }
+        @Override
+        public void onClick(View v) {
+
+            intentConfirm.putExtra(VALUE_KEY_EDITTXT,editText.getText().toString());
+            startActivity(intentConfirm);
+        }
     }
 
     @Override
@@ -92,5 +113,24 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Toast.makeText(getApplicationContext(), "on Resume", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(STATE_CURRENT, truc);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        truc = savedInstanceState.getString(STATE_CURRENT);
+    }
+
+    public void setValueEditText(String txt){
+        value=txt;
+    }
+    public String getValueEdittext(){
+        return value;
     }
 }
